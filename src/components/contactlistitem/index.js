@@ -16,8 +16,9 @@ const ContactListItem = ({user}) => {
       />
       <View style={styles.content} >
         <View style={styles.row}>
-          <Text numberOfLines={1} style={styles.name}>{user.name}</Text>
+          <Text numberOfLines={1} style={styles.name}>{user.username}</Text>
         </View>
+        <Text style={{color:'gray'}} numberOfLines={1} >{user.status}</Text>
       </View>
     </Pressable>
   )

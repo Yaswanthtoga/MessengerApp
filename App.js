@@ -31,7 +31,7 @@ function App() {
       const newUser = {
         id:authUserId,
         image:'',
-        username:authUser.attributes.email,
+        username:authUser.attributes.phone_number,
         status:"Hey,I'm using whatsapp"
       }
       const newUserResponse = await API.graphql(graphqlOperation(createUser,{ input: newUser }))

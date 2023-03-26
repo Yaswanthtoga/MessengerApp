@@ -1,12 +1,36 @@
 import { View, Text,Image,StyleSheet, Pressable } from 'react-native'
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { API,Auth,graphqlOperation } from "aws-amplify";
+import { createChatroom, createUserChatroom } from '../../graphql/mutations.js';
 
 const ContactListItem = ({user}) => {
   const navigation = useNavigation();
 
+  const handlePressed = async ()=>{
+    // Check that Pressed User is already existed in the chat room
+
+    // Create a ChatRoom
+    const newChatRoomData = await API.graphql(graphqlOperation(createChatroom,{ input:{} }));
+    if(!newChatRoomData.data?.createChatroom){
+      console.log("Chat Room Creation Error");
+      return;
+    }
+
+    const newChatRoom = newChatRoomData.data?.createChatroom;
+
+    // Add the Pressed User
+    await API.graphql(graphqlOperation(createUserChatroom,{ input:{ chatroomId:newChatRoom.id, userId:user.id } }))
+
+    // // Add the Authenticated User
+    const authUser = await Auth.currentAuthenticatedUser();
+    await API.graphql(graphqlOperation(createUserChatroom,{ input:{ chatroomId:newChatRoom.id, userId:authUser.attributes.sub } }))
+
+    // Navigate to the newly created Chatroom
+    navigation.navigate("Chat",{ id:newChatRoom.id });
+  }
   return (
-    <Pressable onPress={()=>{}} style={styles.container}>
+    <Pressable onPress={handlePressed} style={styles.container}>
       <Image
          source={{
            uri:user.image
